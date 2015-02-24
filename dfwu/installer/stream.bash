@@ -1,10 +1,5 @@
-if [ "$(whoami)" != "root" ]; then
-	echo "Sorry, you are not root.  Try again with sudo."
-	exit 1
-fi
+mytmpdir=`mktemp -d 2>/dev/null || mktemp -d -t 'dfwu'`
 
-mkdir -pv ~/src
-rm -rfv ~/src/ddns-utils/
-git clone https://github.com/LTGIV/ddns-utils.git ~/src/ddns-utils
+git clone https://github.com/LTGIV/ddns-utils.git $mytmpdir
 
-source ~/src/ddns-utils/dfwu/installer/manifest.bash
+sudo bash $mytmpdir/dfwu/installer/manifest.bash
