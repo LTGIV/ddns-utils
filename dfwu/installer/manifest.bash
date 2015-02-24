@@ -15,9 +15,9 @@ MYDIR=$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )
 TMPINCLUDESTR='Include /etc/csf/csf-ddns.allow'
 ACTION='installed'
 
-TMPDFWUPROGPATH='/usr/local/bin'
+TMPDFWUPROGPATH='/usr/bin'
+TMPDFWUINI="/etc/dfwu.ini"
 TMPALLOWFILE='/etc/csf/csf.allow'
-TMPDFWUINI="$ROOTDIR/etc/dfwu.ini"
 TMPLOC=`mktemp /tmp/csf-allow.XXXXXXXXX`
 TMPCRON=`mktemp /tmp/crontab.XXXXXXXXX`
 #-----/DEFAULT SETTINGS I
@@ -60,15 +60,17 @@ if [ -f $INPDFWUINI ]; then
 	ACTION='upgraded'
 	echo "Note: $INPDFWUINI exists, not replacing."
 else
-	mkdir -p $TMPDFWUINIPATH
-	chmod -R o-rwx $TMPDFWUINIPATH
+	if [ ! -d $TMPDFWUINIPATH ]; then
+		mkdir -p $TMPDFWUINIPATH
+		chmod -R o-rwx $TMPDFWUINIPATH
+	fi
 	cp -a $MYDIR/../dfwu.ini $INPDFWUINI
 	chmod 700 $INPDFWUINI
 fi
 #-----/COPY DFWU INI TO DESTINATION
 
 #----- INSERT (or skip if exists) FIREWALL INCLUDE LINE
-grep -q -F "$INPINCLUDESTR" "$INPALLOWFILE" || echo "$INPINCLUDESTR" >>$INPALLOWFILE
+grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >>$INPALLOWFILE
 #-----/INSERT (or skip if exists) FIREWALL INCLUDE LINE
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
@@ -91,18 +93,18 @@ echo;
 #-----/NOTICE: FINISH
 
 #----- NOTICE: EDIT
-echo "Opening $TMPDFWUINI with your editor ($MYEDITOR) for you to make appropriate changes.";
+echo "Opening $INPDFWUINI with your editor ($MYEDITOR) for you to make appropriate changes.";
 read -n1 -r -p "Press q to quit, or any other key to continue." quitCatch;
 #-----/NOTICE: EDIT
 
 #----- EDITOR
 if [ "$quitCatch" == 'q' ]; then
 	echo;
-	echo "Exiting at your request.  Please don't forget to edit '$TMPDFWUINI'."
+	echo "Exiting at your request.  Please don't forget to edit '$INPDFWUINI'."
 	echo;
 	exit
 else
-	eval $MYEDITOR $TMPDFWUINI
+	eval $MYEDITOR $INPDFWUINI
 fi
 #-----/EDITOR
 
@@ -111,5 +113,5 @@ echo;
 read -n1 -r -p "Press any key to now run DFWU the same as it will run every minute from Cron.";
 echo;
 
-eval $INPDFWUPROGPATH/dfwu.py $TMPDFWUINI
+eval $INPDFWUPROGPATH/dfwu.py $INPDFWUINI
 #-----/REFRESH
