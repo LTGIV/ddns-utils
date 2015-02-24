@@ -115,3 +115,9 @@ echo;
 
 eval $INPDFWUPROGPATH/dfwu.py $INPDFWUINI
 #-----/REFRESH
+
+#----- MANIFEST CONFIG DATA
+mkdir -p $ROOTDIR/.ggcom/ddns-utils
+touch $ROOTDIR/.ggcom/ddns-utils/dfwu.json
+# SAVE MANIFEST CONFIG DATA FOR DFWU - SO UPGRADE/UNINSTALL CAN BE MORE EASY
+#-----/MANIFEST CONFIG DATA
