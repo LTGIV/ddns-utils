@@ -51,6 +51,10 @@ TMPDFWUINIPATH=$(dirname "$INPDFWUINI")
 #-----/DEFAULT SETTINGS II
 
 #----- COPY MAIN APPLICATION
+if [ ! -d $INPDFWUPROGPATH ]; then
+	mkdir -p $INPDFWUPROGPATH
+fi
+
 cp -a $MYDIR/../dfwu.py $INPDFWUPROGPATH/dfwu.py
 chown root: $INPDFWUPROGPATH/dfwu.py
 chmod 755 $INPDFWUPROGPATH/dfwu.py
@@ -58,16 +62,21 @@ chmod 755 $INPDFWUPROGPATH/dfwu.py
 
 #----- COPY DFWU INI TO DESTINATION
 if [ -f $INPDFWUINI ]; then
+
 	ACTION='upgraded'
 	echo "Note: $INPDFWUINI exists, not replacing."
+
 else
+
 	if [ ! -d $TMPDFWUINIPATH ]; then
 		mkdir -p $TMPDFWUINIPATH
 		chmod -R o-rwx $TMPDFWUINIPATH
 	fi
+
 	cp -a $MYDIR/../dfwu.ini $INPDFWUINI
 	chown root: $INPDFWUINI
 	chmod 600 $INPDFWUINI
+
 fi
 #-----/COPY DFWU INI TO DESTINATION
 
