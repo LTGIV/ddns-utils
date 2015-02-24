@@ -52,6 +52,7 @@ TMPDFWUINIPATH=$(dirname "$INPDFWUINI")
 
 #----- COPY MAIN APPLICATION
 cp -a $MYDIR/../dfwu.py $INPDFWUPROGPATH/dfwu.py
+chown root: $INPDFWUPROGPATH/dfwu.py
 chmod 755 $INPDFWUPROGPATH/dfwu.py
 #-----/COPY MAIN APPLICATION
 
@@ -65,6 +66,7 @@ else
 		chmod -R o-rwx $TMPDFWUINIPATH
 	fi
 	cp -a $MYDIR/../dfwu.ini $INPDFWUINI
+	chown root: $INPDFWUINI
 	chmod 600 $INPDFWUINI
 fi
 #-----/COPY DFWU INI TO DESTINATION
