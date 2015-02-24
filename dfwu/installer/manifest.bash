@@ -65,7 +65,7 @@ else
 		chmod -R o-rwx $TMPDFWUINIPATH
 	fi
 	cp -a $MYDIR/../dfwu.ini $INPDFWUINI
-	chmod 700 $INPDFWUINI
+	chmod 600 $INPDFWUINI
 fi
 #-----/COPY DFWU INI TO DESTINATION
 
