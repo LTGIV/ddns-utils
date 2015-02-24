@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 
-DFWU (DDNS Firewall Update) v201502240906
+DFWU (DDNS Firewall Update) v201502242051
 Louis T. Getterman IV (@LTGIV)
 www.GotGetLLC.com / www.opensour.cc
 
