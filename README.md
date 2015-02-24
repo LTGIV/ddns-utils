@@ -5,10 +5,12 @@ https://www.opensour.cc/gotget/ddns-utils/ (coming soon)
 https://www.GotGetLLC.com/
 
 DFWU Turnkey install:
-sudo bash < ( curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash )
+  curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash | sudo ${0#-} /dev/stdin
 
 DFWU Manual install:
+```
 sudo mkdir -pv ~/src
 sudo rm -rfv ~/src/ddns-utils/
 sudo git clone https://github.com/LTGIV/ddns-utils.git ~/src/ddns-utils
 sudo source ~/src/ddns-utils/dfwu/installer/manifest.bash
+```
