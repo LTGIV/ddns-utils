@@ -1,12 +1,10 @@
 # ddns-utils package:
-## DCU (DDNS Client Updater)
-## DFWU (DDNS Firewall Update)
 [Louis T. Getterman IV](https://github.com/LTGIV) ([@LTGIV](https://twitter.com/LTGIV))
 
 https://www.opensour.cc/ddns-utils *(coming soon)*  
 https://www.GotGetLLC.com/
 
-## DDNS Client Updater (DCU)
+## DCU (DDNS Client Updater)
 DCU is geared towards nodes needing to update their reciprocal DDNS entry with an auto-detect or manual IP address.
 
 ## DFWU (DDNS Firewall Update)
