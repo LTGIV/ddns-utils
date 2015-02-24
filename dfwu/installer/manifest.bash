@@ -105,13 +105,13 @@ echo;
 
 #----- MANIFEST CONFIG DATA
 mkdir -p $ROOTDIR/.ggcom/ddns-utils
-touch $ROOTDIR/.ggcom/ddns-utils/dfwu.json
 printf '{"progPath":"%s","progName":"%s","progVersion":"%s","iniPath":"%s","iniName":"%s"}\n'\
 	"$INPDFWUPROGPATH"\
 	"dfwu.py"\
 	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
 	"$TMPDFWUINIPATH"\
-	"${INPDFWUINI##*/}"
+	"${INPDFWUINI##*/}"\
+	> $ROOTDIR/.ggcom/ddns-utils/dfwu.json
 #-----/MANIFEST CONFIG DATA
 
 #----- NOTICE: EDIT
