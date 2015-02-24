@@ -17,6 +17,7 @@ TMPINCLUDESTR='Include /etc/csf/csf-ddns.allow'
 TMPLOC=`mktemp $mydir/csf-allow.XXXXXXXXX`
 TMPCRONSTR="* * * * * /usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini"
 TMPCRON=`mktemp $mydir/crontab.XXXXXXXXX`
+ACTION='installed'
 #-----/DEFAULT SETTINGS I
 
 #----- INSTALL SETTINGS
@@ -26,23 +27,26 @@ if [ -z "$INPALLOWFILE" ]; then
 	INPALLOWFILE=$TMPALLOWFILE
 fi
 
-read -p "What firewall line? [$TMPINCLUDESTR] " INPINCLUDESTR
+read -p "What firewall line? ['$TMPINCLUDESTR'] " INPINCLUDESTR
 if [ -z "$INPINCLUDESTR" ]; then
 	INPINCLUDESTR=$TMPINCLUDESTR
 fi
 #-----/INSTALL SETTINGS
 
 #----- MOVE MAIN APPLICATION
-mv $mydir/../ddns-fwu.py /usr/local/bin/
+cp -a $mydir/../ddns-fwu.py /usr/local/bin/
 chmod 755 /usr/local/bin/ddns-fwu.py
 #-----/MOVE MAIN APPLICATION
 
 #----- MOVE DFWU INI TO root's ~/etc (usually /root/etc) IF DOESN'T EXIST (otherwise, assume an upgrade)
 if [ -f $rootdir/etc/dfwu.ini ]; then
-	echo "$rootdir/etc/dfwu.ini exists, not replacing."
+	ACTION='upgraded'
+	echo "Note: $rootdir/etc/dfwu.ini exists, not replacing."
 else
 	mkdir -p $rootdir/etc
-	mv $mydir/../dfwu.ini $rootdir/etc/dfwu.ini
+	chmod -R o-rwx $rootdir/etc
+	cp -a $mydir/../dfwu.ini $rootdir/etc/dfwu.ini
+	chmod 700 $rootdir/etc/dfwu.ini
 fi
 #-----/MOVE DFWU INI
 
@@ -52,7 +56,7 @@ grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >> $INPALLOWF
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
 CRONTAB_NOHEADER='N'
-crontab -l > $TMPCRON
+crontab -l > $TMPCRON 2>/dev/null
 grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
 ( cat $TMPCRON ) | crontab -
 #-----/INSERT ENTRY (or skip if exists) INTO CRONTAB
@@ -60,7 +64,6 @@ grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
 #----- DELETE TEMPORARY FILES
 rm -rf $TMPLOC
 rm -rf $TMPCRON
-rm -rfv $mydir/../
 #-----/DELETE TEMPORARY FILES
 
 #----- GARBAGE COLLECTION
@@ -70,7 +73,8 @@ unset TMPLOC TMPCRONSTR
 #-----/GARBAGE COLLECTION
 
 #----- NOTICE: FINISH
-echo "DFWU (DDNS Firewall Update) has been installed.";
+echo;
+echo "DFWU (DDNS Firewall Update) has been $ACTION.";
 echo "www.GotGetLLC.com | www.opensour.cc/dfwu";
 echo;
 #-----/NOTICE: FINISH
@@ -83,12 +87,14 @@ read -n1 -r -p "Press q to quit or any other key to continue..." quitCatch;
 #----- EDITOR
 if [ "$quitCatch" == 'q' ]; then
 	echo;
-	echo "Exiting at your request.  Don't forget to edit '$rootdir/etc/dfwu.ini'"
+	echo "Exiting at your request.  Please don't forget to edit '$rootdir/etc/dfwu.ini'."
 	exit
 else
 	eval $myeditor $rootdir/etc/dfwu.ini
 fi
 #-----/EDITOR
+
+read -n1 -r -p "Press any key to now run DFWU the same as it will run every minute from Cron...";
 
 #----- REFRESH
 /usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini

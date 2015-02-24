@@ -23,4 +23,4 @@ hosts	=	server1.freedns.afraid.org
 > Run 'sudo crontab -e' and add the following entry for a per-minute check
 > (and assuming you have a FreeDNS pro account and using 60 TTL - if you get one because of this, tell Joshua Anderson et al. that I sent you)
 
-* * * * * /usr/local/bin/ddns-fwu.py /root/etc/dfwu.ini # DDNS Firewall Update
+* * * * * /usr/local/bin/ddns-fwu.py /root/etc/dfwu.ini
