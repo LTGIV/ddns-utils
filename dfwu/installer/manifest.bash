@@ -26,8 +26,8 @@ rm -rfv ~/src/ddns-utils/
 echo "DFWU (DDNS Firewall Update) has been installed.";
 echo "www.GotGetLLC.com | www.opensour.cc/dfwu";
 echo;
-echo "Opening $HOME/etc/dfwu.ini with your editor for you to make appropriate changes.";
+echo "Don't forget to edit $HOME/etc/dfwu.ini and make appropriate changes.";
 
+#echo "Opening $HOME/etc/dfwu.ini with your editor for you to make appropriate changes.";
 #read -n1 -r -p "Press any key to continue...";
-
-eval ${FCEDIT:-${VISUAL:-${EDITOR:-nano}}} $HOME/etc/dfwu.ini
+#eval ${FCEDIT:-${VISUAL:-${EDITOR:-nano}}} $HOME/etc/dfwu.ini
