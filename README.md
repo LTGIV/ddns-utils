@@ -6,11 +6,11 @@ https://www.GotGetLLC.com/
 
 DFWU Turnkey install:
 ```
-bash <(curl -s https://www.gotgetllc.com/ddns-utils/dfwu/installer/stream.bash)
+bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash)
 ```
 
 DFWU Manual install:
 ```
-sudo git clone https://github.com/LTGIV/ddns-utils.git
+git clone https://github.com/LTGIV/ddns-utils.git
 sudo bash ddns-utils/dfwu/installer/manifest.bash
 ```

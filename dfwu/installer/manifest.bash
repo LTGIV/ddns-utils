@@ -16,11 +16,11 @@ TMPALLOWFILE='/etc/csf/csf.allow'
 TMPINCLUDESTR='Include /etc/csf/csf-ddns.allow'
 TMPLOC=`mktemp $mydir/csf-allow.XXXXXXXXX`
 TMPCRONSTR="* * * * * /usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini"
-TMPCRON1=`mktemp $mydir/crontab.XXXXXXXXX`
-TMPCRON2=`mktemp $mydir/crontab.XXXXXXXXX`
+TMPCRON=`mktemp $mydir/crontab.XXXXXXXXX`
 #-----/DEFAULT SETTINGS I
 
 #----- INSTALL SETTINGS
+echo;
 read -p "Which firewall file? [$TMPALLOWFILE] " INPALLOWFILE
 if [ -z "$INPALLOWFILE" ]; then
 	INPALLOWFILE=$TMPALLOWFILE
@@ -33,7 +33,7 @@ fi
 #-----/INSTALL SETTINGS
 
 #----- MOVE MAIN APPLICATION
-mv -v $mydir/../ddns-fwu.py /usr/local/bin/
+mv $mydir/../ddns-fwu.py /usr/local/bin/
 chmod 755 /usr/local/bin/ddns-fwu.py
 #-----/MOVE MAIN APPLICATION
 
@@ -41,35 +41,32 @@ chmod 755 /usr/local/bin/ddns-fwu.py
 if [ -f $rootdir/etc/dfwu.ini ]; then
 	echo "$rootdir/etc/dfwu.ini exists, not replacing."
 else
-	mkdir -pv $rootdir/etc
-	mv -v $mydir/../dfwu.ini $rootdir/etc/dfwu.ini
+	mkdir -p $rootdir/etc
+	mv $mydir/../dfwu.ini $rootdir/etc/dfwu.ini
 fi
 #-----/MOVE DFWU INI
 
 #----- INSERT (or skip if exists) FIREWALL INCLUDE LINE
-sed -e "\|$INPINCLUDESTR|h; \${x;s|$INPINCLUDESTR||;{g;t};a\\" -e "$INPINCLUDESTR" -e "}" $INPALLOWFILE > $TMPLOC
-cat $TMPLOC | tee $INPALLOWFILE > /dev/null
+grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >> $INPALLOWFILE
 #-----/INSERT (or skip if exists) FIREWALL INCLUDE LINE
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
 CRONTAB_NOHEADER='N'
-crontab -l > $TMPCRON1
-
-sed -e "\|$TMPCRONSTR|h; \${x;s|$TMPCRONSTR||;{g;t};a\\" -e "$TMPCRONSTR" -e "}" $TMPCRON1 > $TMPCRON2
-cat $TMPCRON2 | tee $TMPCRON1 > /dev/null
-
-( cat $TMPCRON1 ) | crontab -
+crontab -l > $TMPCRON
+grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
+( cat $TMPCRON ) | crontab -
 #-----/INSERT ENTRY (or skip if exists) INTO CRONTAB
 
 #----- DELETE TEMPORARY FILES
 rm -rfv $TMPLOC
-rm -rfv $mydir/../../../ddns-utils/
+rm -rfv $TMPCRON
+rm -rfv $mydir/../../ddns-utils/
 #-----/DELETE TEMPORARY FILES
 
 #----- GARBAGE COLLECTION
 unset TMPALLOWFILE INPALLOWFILE
 unset TMPINCLUDESTR INPINCLUDESTR
-unset TMPLOC
+unset TMPLOC TMPCRONSTR
 #-----/GARBAGE COLLECTION
 
 #----- NOTICE: FINISH
