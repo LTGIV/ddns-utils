@@ -6,18 +6,20 @@ fi
 #-----/REQUIRE ROOT
 
 #----- ENVIRONMENT VARIABLES
-myeditor=${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}
-rootdir=~root
-mydir=$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )
+MYEDITOR=${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}
+ROOTDIR=~root
+MYDIR=$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )
 #-----/ENVIRONMENT VARIABLES
 
 #----- DEFAULT SETTINGS I
-TMPALLOWFILE='/etc/csf/csf.allow'
 TMPINCLUDESTR='Include /etc/csf/csf-ddns.allow'
-TMPLOC=`mktemp $mydir/csf-allow.XXXXXXXXX`
-TMPCRONSTR="* * * * * /usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini"
-TMPCRON=`mktemp $mydir/crontab.XXXXXXXXX`
 ACTION='installed'
+
+TMPDFWUPROGPATH='/usr/local/bin'
+TMPALLOWFILE='/etc/csf/csf.allow'
+TMPDFWUINI="$ROOTDIR/etc/dfwu.ini"
+TMPLOC=`mktemp /tmp/csf-allow.XXXXXXXXX`
+TMPCRON=`mktemp /tmp/crontab.XXXXXXXXX`
 #-----/DEFAULT SETTINGS I
 
 #----- INSTALL SETTINGS
@@ -31,33 +33,48 @@ read -p "What firewall line? ['$TMPINCLUDESTR'] " INPINCLUDESTR
 if [ -z "$INPINCLUDESTR" ]; then
 	INPINCLUDESTR=$TMPINCLUDESTR
 fi
+
+read -p "DFWU Program Path? ['$TMPDFWUPROGPATH'] " INPDFWUPROGPATH
+if [ -z "$INPDFWUPROGPATH" ]; then
+	INPDFWUPROGPATH=$TMPDFWUPROGPATH
+fi
+
+read -p "DFWU INI Path? ['$TMPDFWUINI'] " INPDFWUINI
+if [ -z "$INPDFWUINI" ]; then
+	INPDFWUINI=$TMPDFWUINI
+fi
 #-----/INSTALL SETTINGS
 
-#----- MOVE MAIN APPLICATION
-cp -a $mydir/../ddns-fwu.py /usr/local/bin/
-chmod 755 /usr/local/bin/ddns-fwu.py
-#-----/MOVE MAIN APPLICATION
+#----- DEFAULT SETTINGS II
+TMPCRONSTR="* * * * * $INPDFWUPROGPATH/dfwu.py $INPDFWUINI"
+TMPDFWUINIPATH=$(dirname "$INPDFWUINI")
+#-----/DEFAULT SETTINGS II
 
-#----- MOVE DFWU INI TO root's ~/etc (usually /root/etc) IF DOESN'T EXIST (otherwise, assume an upgrade)
-if [ -f $rootdir/etc/dfwu.ini ]; then
+#----- COPY MAIN APPLICATION
+cp -a $MYDIR/../dfwu.py $INPDFWUPROGPATH/dfwu.py
+chmod 755 $INPDFWUPROGPATH/dfwu.py
+#-----/COPY MAIN APPLICATION
+
+#----- COPY DFWU INI TO DESTINATION
+if [ -f $INPDFWUINI ]; then
 	ACTION='upgraded'
-	echo "Note: $rootdir/etc/dfwu.ini exists, not replacing."
+	echo "Note: $INPDFWUINI exists, not replacing."
 else
-	mkdir -p $rootdir/etc
-	chmod -R o-rwx $rootdir/etc
-	cp -a $mydir/../dfwu.ini $rootdir/etc/dfwu.ini
-	chmod 700 $rootdir/etc/dfwu.ini
+	mkdir -p $TMPDFWUINIPATH
+	chmod -R o-rwx $TMPDFWUINIPATH
+	cp -a $MYDIR/../dfwu.ini $INPDFWUINI
+	chmod 700 $INPDFWUINI
 fi
-#-----/MOVE DFWU INI
+#-----/COPY DFWU INI TO DESTINATION
 
 #----- INSERT (or skip if exists) FIREWALL INCLUDE LINE
-grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >> $INPALLOWFILE
+grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >>$INPALLOWFILE
 #-----/INSERT (or skip if exists) FIREWALL INCLUDE LINE
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
 CRONTAB_NOHEADER='N'
-crontab -l > $TMPCRON 2>/dev/null
-grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
+crontab -l >$TMPCRON 2>/dev/null
+grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >>$TMPCRON
 ( cat $TMPCRON ) | crontab -
 #-----/INSERT ENTRY (or skip if exists) INTO CRONTAB
 
@@ -65,12 +82,6 @@ grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
 rm -rf $TMPLOC
 rm -rf $TMPCRON
 #-----/DELETE TEMPORARY FILES
-
-#----- GARBAGE COLLECTION
-unset TMPALLOWFILE INPALLOWFILE
-unset TMPINCLUDESTR INPINCLUDESTR
-unset TMPLOC TMPCRONSTR
-#-----/GARBAGE COLLECTION
 
 #----- NOTICE: FINISH
 echo;
@@ -80,25 +91,25 @@ echo;
 #-----/NOTICE: FINISH
 
 #----- NOTICE: EDIT
-echo "Opening $rootdir/etc/dfwu.ini with your editor ($myeditor) for you to make appropriate changes.";
+echo "Opening $TMPDFWUINI with your editor ($MYEDITOR) for you to make appropriate changes.";
 read -n1 -r -p "Press q to quit, or any other key to continue." quitCatch;
 #-----/NOTICE: EDIT
 
 #----- EDITOR
 if [ "$quitCatch" == 'q' ]; then
 	echo;
-	echo "Exiting at your request.  Please don't forget to edit '$rootdir/etc/dfwu.ini'."
+	echo "Exiting at your request.  Please don't forget to edit '$TMPDFWUINI'."
 	echo;
 	exit
 else
-	eval $myeditor $rootdir/etc/dfwu.ini
+	eval $MYEDITOR $TMPDFWUINI
 fi
 #-----/EDITOR
 
+#----- REFRESH
 echo;
 read -n1 -r -p "Press any key to now run DFWU the same as it will run every minute from Cron.";
 echo;
 
-#----- REFRESH
-/usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini
+eval $INPDFWUPROGPATH/dfwu.py $TMPDFWUINI
 #-----/REFRESH
