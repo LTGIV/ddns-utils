@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 
-DFWU (DDNS Firewall Update) v201502240305
+DFWU (DDNS Firewall Update) v201502240906
 Louis T. Getterman IV (@LTGIV)
 www.GotGetLLC.com / www.opensour.cc
 
@@ -13,9 +13,13 @@ Please see README for automation instructions.
 '''
 
 # Prerequisite modules
-from distutils.spawn import find_executable as which
-from configobj import ConfigObj
-import inspect, os, sys, socket, hashlib
+try:
+	from distutils.spawn import find_executable as which
+	from configobj import ConfigObj
+	import inspect, os, sys, socket, hashlib
+except Exception, e:
+	print 'DFWU: failed to import prerequisite modules (%s)' % e
+	sys.exit()
 
 # Main method
 def main():
@@ -53,7 +57,7 @@ def main():
 	output	+=	'# %s/%s %s\n' % ( prog[ 'path' ], prog[ 'name' ], fileIni )
 	output	+=	'# \n'
 	output	+=	'# Louis T. Getterman IV (@LTGIV)\n'
-	output	+=	'# www.GotGetLLC.com / www.opensour.cc\n'
+	output	+=	'# www.GotGetLLC.com / www.opensour.cc/dfwu\n'
 	output	+=	'#\n'
 
 	# Firewall file: dynamic content

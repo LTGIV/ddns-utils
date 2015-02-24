@@ -81,20 +81,23 @@ echo;
 
 #----- NOTICE: EDIT
 echo "Opening $rootdir/etc/dfwu.ini with your editor ($myeditor) for you to make appropriate changes.";
-read -n1 -r -p "Press q to quit or any other key to continue..." quitCatch;
+read -n1 -r -p "Press q to quit, or any other key to continue." quitCatch;
 #-----/NOTICE: EDIT
 
 #----- EDITOR
 if [ "$quitCatch" == 'q' ]; then
 	echo;
 	echo "Exiting at your request.  Please don't forget to edit '$rootdir/etc/dfwu.ini'."
+	echo;
 	exit
 else
 	eval $myeditor $rootdir/etc/dfwu.ini
 fi
 #-----/EDITOR
 
-read -n1 -r -p "Press any key to now run DFWU the same as it will run every minute from Cron...";
+echo;
+read -n1 -r -p "Press any key to now run DFWU the same as it will run every minute from Cron.";
+echo;
 
 #----- REFRESH
 /usr/local/bin/ddns-fwu.py $rootdir/etc/dfwu.ini

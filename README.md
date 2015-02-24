@@ -1,5 +1,6 @@
 # ddns-utils
 DDNS Client Updater and DFWU (DDNS Firewall Update)
+Louis T. Getterman IV (@LTGIV)
 
 https://www.opensour.cc/gotget/ddns-utils/ (coming soon)
 https://www.GotGetLLC.com/
