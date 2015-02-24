@@ -39,7 +39,7 @@ if [ -z "$INPDFWUPROGPATH" ]; then
 	INPDFWUPROGPATH=$TMPDFWUPROGPATH
 fi
 
-read -p "DFWU INI Path? ['$TMPDFWUINI'] " INPDFWUINI
+read -p "DFWU ini path *AND* name? ['$TMPDFWUINI'] " INPDFWUINI
 if [ -z "$INPDFWUINI" ]; then
 	INPDFWUINI=$TMPDFWUINI
 fi
