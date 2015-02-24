@@ -1,2 +1,0 @@
-# Rules dynamically created by DFWU (DDNS Firewall Update)
-Include /etc/csf/csf-ddns.allow

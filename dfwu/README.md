@@ -1,27 +1,21 @@
-# DFWU
-> Add 'Include /etc/csf/csf-ddns.allow' to csf.allow
+# ddns-utils package:
+## DFWU (DDNS Firewall Update)
+[Louis T. Getterman IV](https://github.com/LTGIV) ([@LTGIV](https://twitter.com/LTGIV))
 
-> Save this Python 2 script to /usr/local/bin/ddns-fwu.py
+https://www.opensour.cc/dfwu *(coming soon)*  
+https://www.GotGetLLC.com/  
+  
+DFWU is geared towards hosts that need to remain closed to the world, but open to select nodes which have ephemeral IP addresses.  
+  
+Examples include:
+1. SIP Server with users working remotely.
+2. MQTT Server with weather station nodes deployed out in the field.
 
-> Create /root/etc/dfwu.ini with the following contents:
+## DFWU Turnkey install:
+`bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash)`
 
-# ------------------------------------------------------------------------------
-[core]
-fwFile		=	'/etc/csf/csf-ddns.allow'
-fwFileBytes	=	1000
-fwName		=	'/usr/sbin/csf'
-fwArgs		=	'--restart'
-
-[sshIn]
-rule	=	tcp|in|d=22|s=%host%
-hosts	=	server1.freedns.afraid.org, server2.freedns.afraid.org, server3.freedns.afraid.org
-
-[webminIn]
-rule	=	tcp|in|d=10000|s=%host%
-hosts	=	server1.freedns.afraid.org
-# ------------------------------------------------------------------------------
-
-> Run 'sudo crontab -e' and add the following entry for a per-minute check
-> (and assuming you have a FreeDNS pro account and using 60 TTL - if you get one because of this, tell Joshua Anderson et al. that I sent you)
-
-* * * * * /usr/local/bin/ddns-fwu.py /root/etc/dfwu.ini
+## DFWU Manual install:
+```
+git clone https://github.com/LTGIV/ddns-utils.git
+sudo bash ddns-utils/dfwu/installer/manifest.bash
+```
