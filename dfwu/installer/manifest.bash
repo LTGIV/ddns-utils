@@ -58,9 +58,9 @@ grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >> $TMPCRON
 #-----/INSERT ENTRY (or skip if exists) INTO CRONTAB
 
 #----- DELETE TEMPORARY FILES
-rm -rfv $TMPLOC
-rm -rfv $TMPCRON
-rm -rfv $mydir/../../ddns-utils/
+rm -rf $TMPLOC
+rm -rf $TMPCRON
+rm -rfv $mydir/../
 #-----/DELETE TEMPORARY FILES
 
 #----- GARBAGE COLLECTION
@@ -82,6 +82,8 @@ read -n1 -r -p "Press q to quit or any other key to continue..." quitCatch;
 
 #----- EDITOR
 if [ "$quitCatch" == 'q' ]; then
+	echo;
+	echo "Exiting at your request.  Don't forget to edit '$rootdir/etc/dfwu.ini'"
 	exit
 else
 	eval $myeditor $rootdir/etc/dfwu.ini
