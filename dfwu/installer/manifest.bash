@@ -103,6 +103,17 @@ echo "www.GotGetLLC.com | www.opensour.cc/dfwu";
 echo;
 #-----/NOTICE: FINISH
 
+#----- MANIFEST CONFIG DATA
+mkdir -p $ROOTDIR/.ggcom/ddns-utils
+touch $ROOTDIR/.ggcom/ddns-utils/dfwu.json
+printf '{"progPath":"%s","progName":"%s","progVersion":"%s","iniPath":"%s","iniName":"%s"}\n'\
+	"$INPDFWUPROGPATH"\
+	"dfwu.py"\
+	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
+	"$TMPDFWUINIPATH"\
+	"${INPDFWUINI##*/}"
+#-----/MANIFEST CONFIG DATA
+
 #----- NOTICE: EDIT
 echo "Opening $INPDFWUINI with your editor ($MYEDITOR) for you to make appropriate changes.";
 read -n1 -r -p "Press q to quit, or any other key to continue." quitCatch;
@@ -126,14 +137,3 @@ echo;
 
 eval $INPDFWUPROGPATH/dfwu.py $INPDFWUINI
 #-----/REFRESH
-
-#----- MANIFEST CONFIG DATA
-mkdir -p $ROOTDIR/.ggcom/ddns-utils
-touch $ROOTDIR/.ggcom/ddns-utils/dfwu.json
-printf '{"progPath":"%s","progName":"%s","progVersion":"%s","iniPath":"%s","iniName":"%s"}\n'\
-	"$INPDFWUPROGPATH"\
-	"dfwu.py"\
-	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
-	"$TMPDFWUINIPATH"\
-	"${INPDFWUINI##*/}"
-#-----/MANIFEST CONFIG DATA
