@@ -28,4 +28,4 @@ echo "www.GotGetLLC.com | www.opensour.cc/dfwu";
 echo;
 echo "Opening $HOME/etc/dfwu.ini with your editor for you to make appropriate changes.";
 read -n1 -r -p "Press any key to continue...";
-sudo ${FCEDIT:-${VISUAL:-${EDITOR:-nano}}} $HOME/etc/dfwu.ini
+${FCEDIT:-${VISUAL:-${EDITOR:-nano}}} $HOME/etc/dfwu.ini
