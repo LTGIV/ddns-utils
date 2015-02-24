@@ -1,8 +1,8 @@
 # ddns-utils package:
-[Louis T. Getterman IV](https://github.com/LTGIV) ([@LTGIV](https://twitter.com/LTGIV))
-
 https://www.opensour.cc/ddns-utils *(coming soon)*  
 https://www.GotGetLLC.com/
+
+[Louis T. Getterman IV](https://github.com/LTGIV) ([@LTGIV](https://twitter.com/LTGIV))
 
 ## DCU (DDNS Client Updater)
 DCU is geared towards nodes needing to update their reciprocal DDNS entry with a WAN auto-detect or manually updated IP address.
