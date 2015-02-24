@@ -7,4 +7,4 @@ mkdir -pv ~/src
 rm -rfv ~/src/ddns-utils/
 git clone https://github.com/LTGIV/ddns-utils.git ~/src/ddns-utils
 
-source ~/src/ddns-utils/dfwu/installer/manifest.bash
+~/src/ddns-utils/dfwu/installer/manifest.bash
