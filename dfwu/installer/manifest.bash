@@ -106,9 +106,9 @@ echo;
 #----- MANIFEST CONFIG DATA
 mkdir -p $ROOTDIR/.ggcom/ddns-utils
 printf '{ "program":{ "version":%s, "path":"%s", "name":"%s" }, "config":{ "path":"%s", "name":"%s" } }\n'\
+	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
 	"$INPDFWUPROGPATH"\
 	"dfwu.py"\
-	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
 	"$TMPDFWUINIPATH"\
 	"${INPDFWUINI##*/}"\
 	> $ROOTDIR/.ggcom/ddns-utils/dfwu.json
