@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+#
+# DFWU (DDNS Firewall Update) Installer-Manifest v201502250259
+# Louis T. Getterman IV (@LTGIV)
+# www.GotGetLLC.com | www.opensour.cc/dfwu
+#
+# sudo bash ddns-utils/dfwu/installer/manifest.bash
+
 #----- REQUIRE ROOT
 if [ "$(whoami)" != "root" ]; then
 	echo "Sorry, you are not root.  Try again with sudo."
@@ -24,6 +32,8 @@ TMPCRON=`mktemp /tmp/crontab.XXXXXXXXX`
 
 #----- INSTALL SETTINGS
 echo;
+
+# ADD WHILE LOOP HERE FOR ITERATING UNTIL FILE IS FOUND, TO TRY AND AVOID PITFALLS
 read -p "Which firewall file? [$TMPALLOWFILE] " INPALLOWFILE
 if [ -z "$INPALLOWFILE" ]; then
 	INPALLOWFILE=$TMPALLOWFILE
@@ -34,11 +44,13 @@ if [ -z "$INPINCLUDESTR" ]; then
 	INPINCLUDESTR=$TMPINCLUDESTR
 fi
 
+# ADD OVERRIDE ERROR
 read -p "DFWU Program Path? ['$TMPDFWUPROGPATH'] " INPDFWUPROGPATH
 if [ -z "$INPDFWUPROGPATH" ]; then
 	INPDFWUPROGPATH=$TMPDFWUPROGPATH
 fi
 
+# ADD OVERRIDE ERROR (or is it an upgrade?)
 read -p "DFWU ini path *AND* name? ['$TMPDFWUINI'] " INPDFWUINI
 if [ -z "$INPDFWUINI" ]; then
 	INPDFWUINI=$TMPDFWUINI
