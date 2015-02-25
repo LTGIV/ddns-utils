@@ -94,7 +94,10 @@ else
 		echo "DFWU Config: $TMPDFWUINIPATH"
 		echo "Please note: if directories were specifically created for DFWU or it's config file, you will need to delete those manually."
 		echo;
-		rm -rfv $INPDFWUPROGPATH/dfwu.py $INPDFWUINI
+		rm -rfv $INPDFWUPROGPATH/dfwu.py
+		if [ -f $INPDFWUINI ]; then
+			rm -rfv $INPDFWUINI
+		fi
 		exit
 	fi
 
