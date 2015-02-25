@@ -90,14 +90,15 @@ else
 	if [ "$quitCatch" == 'q' ]; then
 		echo;
 		echo "Exiting at your request, and cleaning up."
-		echo "DFWU Program: $INPDFWUPROGPATH"
-		echo "DFWU Config: $TMPDFWUINIPATH"
+		echo "DFWU program path: $INPDFWUPROGPATH"
+		echo "DFWU config. path: $TMPDFWUINIPATH"
 		echo "Please note: if directories were specifically created for DFWU or it's config file, you will need to delete those manually."
 		echo;
 		rm -rfv $INPDFWUPROGPATH/dfwu.py
 		if [ -f $INPDFWUINI ]; then
 			rm -rfv $INPDFWUINI
 		fi
+		echo;
 		exit
 	fi
 
