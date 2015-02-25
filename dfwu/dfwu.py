@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 '''
 
-DFWU (DDNS Firewall Update) v201502242051
+DFWU (DDNS Firewall Update) v201502250237
 Louis T. Getterman IV (@LTGIV)
-www.GotGetLLC.com / www.opensour.cc
+www.GotGetLLC.com | www.opensour.cc/dfwu
 
 Example usage with CSF (ConfigServer Security & Firewall):
-/usr/local/bin/ddns-fwu.py /root/etc/dfwu.ini
-
-Please see README for automation instructions.
+/usr/bin/dfwu.py /etc/dfwu.ini
 
 '''
 
@@ -47,8 +45,14 @@ def main():
 	fwArgs			=	core.get( 'fwArgs',			'--restart' )
 	del core
 
-	# Hash of file
-	fwFileHash		=	hashlib.sha1( open( fwFile ).read( int(fwFileBytes) ) ).hexdigest()
+	# Hash of DDNS file
+	try:
+		if ( os.path.isfile( fwFile ) == False ):
+			raise Exception( "'%s' does not exist!" % ( fwFile ) )
+		fwFileHash		=	hashlib.sha1( open( fwFile ).read( int(fwFileBytes) ) ).hexdigest()
+	except Exception, e:
+		print 'DFWU: failed with DDNS file (%s)' % e
+		sys.exit()
 	
 	# Firewall file: static content
 	output	=	'#\n'
