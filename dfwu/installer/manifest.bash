@@ -81,7 +81,24 @@ fi
 #-----/COPY DFWU INI TO DESTINATION
 
 #----- INSERT (or skip if exists) FIREWALL INCLUDE LINE
-grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >>$INPALLOWFILE
+if [ -f $INPALLOWFILE ]; then
+	grep -q -F "$INPINCLUDESTR" $INPALLOWFILE || echo "$INPINCLUDESTR" >>$INPALLOWFILE
+else
+	echo "ERROR: '$INPALLOWFILE' cannot be located."
+	read -n1 -r -p "Press q to abort, or any other key to continue." quitCatch;
+
+	if [ "$quitCatch" == 'q' ]; then
+		echo;
+		echo "Exiting at your request, and cleaning up."
+		echo "DFWU Program: $INPDFWUPROGPATH"
+		echo "DFWU Config: $TMPDFWUINIPATH"
+		echo "Please note: if directories were specifically created for DFWU or it's config file, you will need to delete those manually."
+		echo;
+		rm -rfv $INPDFWUPROGPATH/dfwu.py $INPDFWUINI
+		exit
+	fi
+
+fi
 #-----/INSERT (or skip if exists) FIREWALL INCLUDE LINE
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
