@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 
-DFWU (DDNS Firewall Update) v201502250237
+DFWU (DDNS Firewall Update) v201502260818
 Louis T. Getterman IV (@LTGIV)
 www.GotGetLLC.com | www.opensour.cc/dfwu
 
@@ -11,10 +11,11 @@ Example usage with CSF (ConfigServer Security & Firewall):
 '''
 
 # Prerequisite modules
+import os, sys
 try:
 	from distutils.spawn import find_executable as which
 	from configobj import ConfigObj
-	import inspect, os, sys, socket, hashlib
+	import inspect, socket, hashlib
 except Exception, e:
 	print 'DFWU: failed to import prerequisite modules (%s)' % e
 	sys.exit()
