@@ -11,7 +11,7 @@ DCU is geared towards nodes needing to update their reciprocal DDNS entry with a
 DFWU is geared towards hosts that need to remain closed to the world, but open to select nodes which have an ephemeral IP address.  
 
 ### DFWU Turnkey install:
-`bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash)`
+`bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash||wget -q -O - https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash||echo 'DFWU Install Failure.'>&2)`
 
 ### DFWU Manual install:
 `git clone https://github.com/LTGIV/ddns-utils.git`  

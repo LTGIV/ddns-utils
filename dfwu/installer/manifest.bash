@@ -4,6 +4,7 @@
 # Louis T. Getterman IV (@LTGIV)
 # www.GotGetLLC.com | www.opensour.cc/dfwu
 #
+# Example usage:
 # sudo bash ddns-utils/dfwu/installer/manifest.bash
 
 #----- REQUIRE ROOT

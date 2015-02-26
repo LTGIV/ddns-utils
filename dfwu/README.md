@@ -12,7 +12,7 @@ Examples include:
 2. MQTT Server with weather station nodes deployed out in the field.
 
 ## DFWU Turnkey install:
-`bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash)`
+`bash <(curl -s https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash||wget -q -O - https://raw.githubusercontent.com/LTGIV/ddns-utils/master/dfwu/installer/stream.bash||echo 'DFWU Install Failure.'>&2)`
 
 ## DFWU Manual install:
 ```
