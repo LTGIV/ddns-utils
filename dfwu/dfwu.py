@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 '''
 
-DFWU (DDNS Firewall Update) v201502260818
+DFWU (DDNS Firewall Update) v201502261001
 Louis T. Getterman IV (@LTGIV)
 www.GotGetLLC.com | www.opensour.cc/dfwu
 
-Example usage with CSF (ConfigServer Security & Firewall):
+Example usage:
 /usr/bin/dfwu.py /etc/dfwu.ini
 
 '''
@@ -31,9 +31,10 @@ def main():
 	# Configuration
 	try:
 		fileIni			=	sys.argv[1]
-		config			=	ConfigObj( fileIni )
 		if ( os.path.isfile( fileIni ) == False ):
 			raise Exception( "'%s' does not exist!" % ( fileIni ) )
+		else:
+			config			=	ConfigObj( fileIni )
 	except Exception, e:
 		print 'DFWU: failed with configuration file (%s)' % e
 		sys.exit()

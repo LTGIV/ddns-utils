@@ -1,18 +1,97 @@
 #!/usr/bin/env bash
 #
-# DFWU (DDNS Firewall Update) Installer-Manifest v201502250259
+# DFWU (DDNS Firewall Update) Installer-Manifest v201503070705
 # Louis T. Getterman IV (@LTGIV)
 # www.GotGetLLC.com | www.opensour.cc/dfwu
 #
 # Example usage:
 # sudo bash ddns-utils/dfwu/installer/manifest.bash
 
+################################################################################
+SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+SCRIPTNAME=`basename $0`
+UPPATH="$( cd "$(dirname "${SCRIPTPATH}/../")" ; pwd -P )"
+OWNER=`ls -ld "$UPPATH" | awk 'NR==1 {print $3}'`
+WHOAMI="$(whoami)"
+################################################################################
+
+# Try to locate GGCOM Bash Library
+echo -n "Checking for GGCOM Bash Library... "
+LIBPATH=''
+TMPGGCOMCHECK=(
+	"$UPPATH/ggcom-bash-library"
+	
+	"`eval echo ~${OWNER}`/ggcom/ggcom-bash-library"
+	"`eval echo ~${OWNER}`/ggcom/lib/bash"
+	
+	"`eval echo ~${WHOAMI}`/ggcom/ggcom-bash-library"
+	"`eval echo ~${WHOAMI}`/ggcom/lib/bash"
+	
+	"/usr/lib/ggcom/bash"
+)
+for i in "${TMPGGCOMCHECK[@]}"
+do
+	if [ -f "$i/version.bash" ]; then
+		echo "located in '$i'"
+		LIBPATH=$i
+		break
+	fi
+done
+unset TMPGGCOMCHECK i
+if [ -z "$LIBPATH" ]; then
+	echo "not located."
+
+	LIBPATH=`mktemp -d 2>/dev/null || mktemp -d -t 'dfwu'`
+
+	echo "Downloading latest GGCOM Bash Library to a temporary directory for use with DFWU install:"
+	if [ -z "$(ls -A $LIBPATH)" ]; then git clone https://github.com/LTGIV/ggcom-bash-library.git $LIBPATH; fi
+
+	chown -R $OWNER: $LIBPATH
+	chmod -R 750 $LIBPATH
+	echo;
+fi
+
+################################################################################
+source "${LIBPATH}/varsBash.bash"
+source "${LIBPATH}/string.bash"
+source "${LIBPATH}/version.bash"
+################################################################################
+#
+################################################################################
+
+#----- NOTICE: INFO
+echo `str_repeat - 80`
+echo "`getVersion $0 header`"
+echo `str_repeat - 80`
+echo;
+#-----/NOTICE: INFO
+
 #----- REQUIRE ROOT
-if [ "$(whoami)" != "root" ]; then
-	echo "Sorry, you are not root.  Try again with sudo."
+if [ "$WHOAMI" != "root" ]; then
+	echo 'Sorry, you are not root.  Please try again with sudo.' >&2
 	exit 1
 fi
 #-----/REQUIRE ROOT
+
+#----- REQUIRE PYTHON MODULES
+TMPPYTHONMODS=(
+	"from distutils.spawn import find_executable as which"
+	"from configobj import ConfigObj"
+	"import inspect, socket, hashlib"
+)
+for i in "${TMPPYTHONMODS[@]}"
+do
+	TMPPYOUTPUT=`python -c '"$i"' 2>&1`
+	if [ ! -z "$TMPPYOUTPUT" ]; then
+		echo "DFWU is a Python application which requires Python modules and failed at:" >&2
+		echo "'$i'" >&2
+		echo "Typically, you can fix this problem by installing the module with 'sudo pip install <ModuleName>'" >&2
+		echo;
+		exit 1;
+	fi
+done
+unset TMPPYTHONMODS i TMPPYOUTPUT
+#-----/REQUIRE CONFIGOBJ
 
 #----- ENVIRONMENT VARIABLES
 MYEDITOR=${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}
@@ -21,18 +100,17 @@ MYDIR=$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )
 #-----/ENVIRONMENT VARIABLES
 
 #----- DEFAULT SETTINGS I
+TMPALLOWFILE='/etc/csf/csf.allow'
 TMPINCLUDESTR='Include /etc/csf/csf-ddns.allow'
+
 ACTION='installed'
 
 TMPDFWUPROGPATH='/usr/bin'
-TMPDFWUINI="/etc/dfwu.ini"
-TMPALLOWFILE='/etc/csf/csf.allow'
-TMPLOC=`mktemp /tmp/csf-allow.XXXXXXXXX`
-TMPCRON=`mktemp /tmp/crontab.XXXXXXXXX`
+TMPDFWUINI='/etc/dfwu.ini'
+TMPCRONFILE=`mktemp /tmp/crontab.XXXXXXXXX`
 #-----/DEFAULT SETTINGS I
 
 #----- INSTALL SETTINGS
-echo;
 
 # ADD WHILE LOOP HERE FOR ITERATING UNTIL FILE IS FOUND, TO TRY AND AVOID PITFALLS
 read -p "Which firewall file? [$TMPALLOWFILE] " INPALLOWFILE
@@ -120,35 +198,57 @@ fi
 
 #----- INSERT ENTRY (or skip if exists) INTO CRONTAB
 CRONTAB_NOHEADER='N'
-crontab -l >$TMPCRON 2>/dev/null
-grep -q -F "$TMPCRONSTR" $TMPCRON || echo "$TMPCRONSTR" >>$TMPCRON
-( cat $TMPCRON ) | crontab -
+crontab -l >$TMPCRONFILE 2>/dev/null
+grep -q -F "$TMPCRONSTR" $TMPCRONFILE || echo "$TMPCRONSTR" >>$TMPCRONFILE
+( cat $TMPCRONFILE ) | crontab -
 #-----/INSERT ENTRY (or skip if exists) INTO CRONTAB
 
 #----- DELETE TEMPORARY FILES
-rm -rf $TMPLOC
-rm -rf $TMPCRON
+rm -rf $TMPCRONFILE
 #-----/DELETE TEMPORARY FILES
 
 #----- NOTICE: FINISH
 echo;
-echo "DFWU (DDNS Firewall Update) has been $ACTION.";
-echo "www.GotGetLLC.com | www.opensour.cc/dfwu";
+echo "`getVersion $INPDFWUPROGPATH/dfwu.py header`"
+echo "Steps taken: $ACTION.";
 echo;
 #-----/NOTICE: FINISH
 
 #----- MANIFEST CONFIG DATA
-mkdir -p $ROOTDIR/.ggcom/ddns-utils
-printf '{ "program":{ "version":%s, "path":"%s", "name":"%s" }, "config":{ "path":"%s", "name":"%s" } }\n'\
-	"`head -n4 $INPDFWUPROGPATH/dfwu.py | grep 'v[0-9]' | grep -Eo '[0-9]{1,}'`"\
-	"$INPDFWUPROGPATH"\
-	"dfwu.py"\
-	"$TMPDFWUINIPATH"\
-	"${INPDFWUINI##*/}"\
-	> $ROOTDIR/.ggcom/ddns-utils/dfwu.json
+GGCOMDATADIR=$ROOTDIR/.ggcom/ddns-utils
+echo "Updating GotGet common data in '$GGCOMDATADIR'"
+mkdir -pv $GGCOMDATADIR
+
+cat <<!DFWUMANIFEST > $GGCOMDATADIR/dfwu.json
+{
+	"program": {
+		"version": `getVersion $INPDFWUPROGPATH/dfwu.py number`,
+		"path": "$INPDFWUPROGPATH",
+		"name": "dfwu.py",
+		"action": "$ACTION"
+	},
+	"config": {
+		"path": "$TMPDFWUINIPATH",
+		"name": "${INPDFWUINI##*/}",
+		"action": "$ACTION"
+	},
+	"cron": {
+		"entry": "$TMPCRONSTR"
+	},
+	"firewall": {
+		"path": "`dirname "$INPALLOWFILE"`",
+		"name": "${INPALLOWFILE##*/}",
+		"line": "$INPINCLUDESTR",
+		"action": "modified"
+	}
+}
+!DFWUMANIFEST
+
+echo "GotGet Common manifest data written to '$GGCOMDATADIR/dfwu.json'"
 #-----/MANIFEST CONFIG DATA
 
 #----- NOTICE: EDIT
+echo;
 echo "Opening $INPDFWUINI with your editor ($MYEDITOR) for you to make appropriate changes.";
 read -n1 -r -p "Press q to quit, or any other key to continue." quitCatch;
 #-----/NOTICE: EDIT
